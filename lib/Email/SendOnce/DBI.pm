@@ -1,4 +1,4 @@
-package Bean::SendOnce::DBI;
+package Email::SendOnce::DBI;
 
 use strict;
 use warnings;
