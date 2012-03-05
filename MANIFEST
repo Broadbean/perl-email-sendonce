@@ -6,7 +6,7 @@ Makefile.PL
 MANIFEST			This list of files
 MANIFEST.SKIP
 README
-t/000-use.t
+t/001-use.t
 t/200-_normalise_email.t
 xt/manifest.t
 xt/pod-coverage.t
