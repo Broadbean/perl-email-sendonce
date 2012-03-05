@@ -11,6 +11,9 @@ To install this module, run the following commands:
 	make test
 	make install
 
+Or simply:
+	cpanm https://github.com/andyjones/perl-email-sendonce/tarball/master
+
 Then setup the database:
 
 	my $dbh = DBI->connect($dns, $username, $password);
