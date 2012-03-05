@@ -11,12 +11,12 @@ use Email::SendOnce::DBI;
 
 my $TABLE = q{no_notifications_sent};
 
-our $VERSION = '0.01'; # remember to update docs below too
+our $VERSION = '0.02'; # remember to update docs below too
 
 # default is to send one notification per day
 my $DEFAULT_EVERY_SECS = 24 * 60 * 60;
 
-sub run_once {
+sub send {
     my $class = shift;
     my $dbh = Email::SendOnce::DBI->new(shift);
     my $msg = Email::SendOnce::Email->new(shift);
@@ -262,23 +262,122 @@ Version 0.01
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
+It is useful to setup email alerts when the unexpected happens like
+a third party service being unavailable.
 
-Perhaps a little code snippet.
+If you are a high traffic site, you can end up with a lot of emails
+and that volume can cause problems of it's own. Or perhaps it is just the hassle of deleting all the alerts.
+
+This module surpresses duplicate emails from being sent so you only receive
+one email per configurable time interval.
 
     use Email::SendOnce;
 
-    my $foo = Email::SendOnce->new();
+    my $dbh = DBI->connect($dsn, $username, $password);
+
+    # create a database & tables to store our data in
+    # only need to do this once
+    Email::SendOnce->initialise_database($dbh);
+
+    # build an email
+    # also supports everything that Email::Abstract supports too
+    my $msg = MIME::Lite->new();
+
+    # send the email once per 24 hours
+    Email::SendOnce->send($dbh, $msg);
     ...
 
-=head1 EXPORT
+The send history is stored in a database of your choice. SQLite and MySQL
+have both been tested but others may work.
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+=head1 METHODS
 
-=head1 SUBROUTINES/METHODS
+=head2 send( $dbh, $msg, { OPTIONS_REF } )
 
-=head2 function1
+=over 4
+
+=item $dbh
+
+  A DBI connection to a database. You can create the tables required
+  in the database with C<initialise_database>
+
+=item $msg
+
+  A L<MIME::Lite> object or any object supported by L<Email::Abstract>
+  if installed
+
+=item $options_ref [OPTIONAL]
+
+  Optional hash ref containing any of:
+
+=over 4
+
+=item every
+
+how long until we send a duplicate email. In seconds or supports d, h, m, s units
+
+=item id
+
+if you want to supply your own id instead of letting us calculate it based on
+the email
+
+=item id_callback
+
+subroutine ref that should return the id. Passed $dbh, $msg, $options_ref
+
+=item send_callback
+
+subroutine ref that can send the message. If unavailable, we send the email
+using L<MIME::Lite> or L<Email::Sender::Simple>.
+
+=back
+
+=back
+
+An email is considered a duplicate if it has the same subject and recipients.
+
+You can also supply an id of your own to be used to deduplicate:
+
+    Email::SendOnce->send($dbh, $msg, { id => $your_id });
+
+or supply a subroutine ref that returns an id:
+
+    Email::SendOnce->send($dbh, $msg, {
+        id_callback => sub { my ($dbh, $msg, $options_ref) = @_; return $id++; },
+    });
+
+NB. The default id length in the table is 27 characters. If you want to use
+longer you will need to alter the table definition
+
+=head1 EXAMPLES
+
+=head2 Notify me once every 10 minutes
+
+    Email::SendOnce->send($dbh, $msg, { every => '10m' });
+
+=head2 Send email using a different method
+
+    Email::SendOnce->send($dbh, $msg, {
+        send_callback => sub {
+            my ($dbh, $msg, $options_ref) = @_;
+
+            .. your custom sending code ..
+        },
+    });
+
+=head2 initialise_database( $dbh )
+
+Creates the tables required to storage the send history
+
+=head2 last_notification( $dbh, $id )
+
+Returns how long ago the last notification was sent with id = C<$id>. Unlikely
+to be called directly
+
+=head2 record_notification( $dbh, $id )
+
+Records that we have sent a notification with id C<$id>. Unlikely to be called
+directly
 
 =head1 AUTHOR
 

@@ -44,3 +44,11 @@ sub sqlite_now      { return "datetime('now')"; }
 sub mysql_now       { return "NOW()";           }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Email::SendOnce::DBI - Datetime compatibility layer on DBI
+
+Tested with SQLite & MySQL, but may work on others

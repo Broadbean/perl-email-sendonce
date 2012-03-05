@@ -63,3 +63,11 @@ sub send {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Email::SendOnce::Email - message abstraction layer used by Email::SendOnce
+
+Supports MIME::Lite & more if you have Email::Abstract installed
