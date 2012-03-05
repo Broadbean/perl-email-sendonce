@@ -1,4 +1,4 @@
-package Bean::SendOnce::Email;
+package Email::SendOnce::Email;
 
 # tiny compatibility layer around MIME::Lite & Email::Abstract
 
