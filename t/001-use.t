@@ -30,7 +30,6 @@ my $dbh = eval { DBI->connect($dsn, $username, $password) };
 if ( !$dbh ) {
     plan skip_all => "Unable to connect to database ($@), perhaps SQLite is not installed";
 }
-$class->initialise_database( $dbh );
 
 # Set the test plan
 my $tests_per_mailer = 5;
@@ -38,6 +37,9 @@ plan tests => $tests_per_mailer * scalar(keys %classes) + 1;
 
 #### Run tests
 use_ok( $class );
+
+# now we can initialise a database for testing
+$class->initialise_database( $dbh );
 
 while ( my ($mail_class, $mail_generator) = each %classes ) {
     my $has_mail_class = eval "use $mail_class; 1";
