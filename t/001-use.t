@@ -58,7 +58,7 @@ while ( my ($mail_class, $mail_generator) = each %classes ) {
         {
             my $msg = $mail_generator->();
 
-            my $sent = $class->run_once(
+            my $sent = $class->send(
                 $dbh,
                 $msg,
             );
@@ -69,7 +69,7 @@ while ( my ($mail_class, $mail_generator) = each %classes ) {
         {
             my $msg = $mail_generator->();
 
-            my $sent = $class->run_once(
+            my $sent = $class->send(
                 $dbh,
                 $msg,
             );
@@ -82,7 +82,7 @@ while ( my ($mail_class, $mail_generator) = each %classes ) {
                 To => q{drop@broadbean.net},
             });
 
-            my $sent = $class->run_once(
+            my $sent = $class->send(
                 $dbh,
                 $msg,
             );
@@ -95,7 +95,7 @@ while ( my ($mail_class, $mail_generator) = each %classes ) {
                 Subject => q{Testing, Testing, one, two, three, four},
             });
 
-            my $sent = $class->run_once(
+            my $sent = $class->send(
                 $dbh,
                 $msg,
             );
@@ -108,7 +108,7 @@ while ( my ($mail_class, $mail_generator) = each %classes ) {
         {
             my $msg = $mail_generator->();
 
-            my $sent = $class->run_once(
+            my $sent = $class->send(
                 $dbh,
                 $msg, {
                     every => '1s',
