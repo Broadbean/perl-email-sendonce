@@ -12,7 +12,7 @@ To install this module, run the following commands:
 	make install
 
 Or simply:
-	cpanm https://github.com/andyjones/perl-email-sendonce/tarball/master
+	cpanm https://github.com/Broadbean/perl-email-sendonce/tarball/master
 
 Then setup the database:
 
@@ -28,6 +28,7 @@ SYNPOSIS
 	    Data    => "Your message detail ...",
 	);
 
+        # Only send this email once every 24 hours
 	Email::SendOnce->send( $dbh, $msg );
 
 ADVANCED USAGE
@@ -36,8 +37,8 @@ ADVANCED USAGE
 	    $dbh,
 	    $msg, {
 		id    => $id,   # specify an id for this message
-		every => '20m', #
-	    
+		every => '20m', # only send this email if the last time it was sent was over 20 mins 
+	    ago
 	    },
 	)
 
